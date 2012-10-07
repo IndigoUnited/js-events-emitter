@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>events-emitter tests</title>
+        <link rel="stylesheet" href="../node_modules/mocha/mocha.css" />
+        <script src="../node_modules/mocha/mocha.js"></script>
+        <script src="../node_modules/expect.js/expect.js"></script>
+        <script src="../node_modules/requirejs/require.js"></script>
+        <script src="util/adapter.js"></script>
+        <script>
+            var options = {
+                ui: 'bdd',
+                globals: ['console']
+            };
+
+            // TODO: remove this once mocha fixes this (https://github.com/visionmedia/mocha/issues/243)
+            if (navigator.userAgent.indexOf('Opera') !== -1) {
+                options.globals.push('stats', 'report');
+            } else if (navigator.userAgent.indexOf('Firefox') !== -1) {
+                options.globals.push('getInterface');   // Sometimes Firefox exposes a getInterface global.. I think it's Firebug
+            }
+
+            mocha.setup(options);
+
+            require(['domReady!', './test'], function () {
+                mocha
+                .run();
+            });
+        </script>
+    </head>
+    <body>
+        <div id="mocha"></div>
+    </body>
+</html>
