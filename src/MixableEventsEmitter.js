@@ -32,6 +32,19 @@ define(['dejavu/AbstractClass', './SubscribeInterface', 'amd-utils/lang/toArray'
         /**
          * {@inheritDoc}
          */
+        once: function (event, fn, $context) {
+            var events = this._listeners[event] = this._listeners[event] || [];
+
+            if (this._getListenerIndex(event, fn, $context) === -1) {
+                events.push({ fn: fn, context: $context, once: true });
+            }
+
+            return this;
+        },
+
+        /**
+         * {@inheritDoc}
+         */
         off: function ($event, $fn, $context) {
             if (!$fn && arguments.length < 2) {
                 this._clearListeners($event);
@@ -81,6 +94,10 @@ define(['dejavu/AbstractClass', './SubscribeInterface', 'amd-utils/lang/toArray'
 
                     if (curr.fn) {
                         curr.fn.apply(curr.context || this, params);
+                        if (curr.once) {
+                            listeners.splice(x, 1);
+                            x -= 1;
+                        }
                     } else {
                         listeners.splice(x, 1);
                         x -= 1;

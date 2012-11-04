@@ -25,6 +25,18 @@ define(['dejavu/Interface'], function (Interface) {
         on: function (event, fn, $context) {},
 
         /**
+         * Adds a new event listener that is removed automatically afterwards.
+         * If the listener is already attached, it won't get duplicated.
+         *
+         * @param {String}   event      The event name
+         * @param {Function} fn         The listener
+         * @param {Object}   [$context] The context in which the function will be executed, defaults to the instance
+         *
+         * @return {MixableEventsEmitter} The instance itself to allow chaining
+         */
+        once: function (event, fn, $context) {},
+
+        /**
          * Removes an existent event listener.
          * If no fn and context is passed, removes all event listeners of a given name.
          * If no event is specified, removes all events of all names.

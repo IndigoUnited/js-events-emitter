@@ -106,6 +106,27 @@ define(['dejavu/Class', 'src/MixableEventsEmitter', 'src/EventsEmitter'], functi
 
         });
 
+        describe('.once(event, fn, $context', function () {
+
+            it('should listen only once', function () {
+
+                emitter.on('click', function () {
+                    stack.push('one');
+                });
+
+                emitter.once('click', function () {
+                    stack.push('two');
+                });
+
+                emitter.emit('click');
+                emitter.emit('click');
+
+                expect(stack).to.eql(['one', 'two', 'one']);
+
+            });
+
+        });
+
         describe('.off(event, fn, $context)', function () {
 
             it('should remove the specified listener', function () {
