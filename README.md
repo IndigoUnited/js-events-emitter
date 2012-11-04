@@ -16,7 +16,7 @@ Register an `event` listener `fn` (with the option to pass a `$context`).
 Duplicate listeners are discarded.
 
 
-### EventsEmitter#on(event, fn, $context) ###
+### EventsEmitter#once(event, fn, $context) ###
 
 Register an `event` listener `fn` that runs only once (with the option to pass a `$context`).
 Duplicate listeners are discarded.
