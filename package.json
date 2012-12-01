@@ -2,12 +2,12 @@
     "name": "events-emitter",
     "version": "0.0.1",
     "devDependencies": {
-        "mocha": "1.6.x",
-        "expect.js": "0.2.x",
+        "mocha": "~1.7.3",
+        "expect.js": "~0.2.0",
         "domReady": "git://github.com/requirejs/domReady.git",
-        "requirejs": "2.0.x"
+        "requirejs": "~2.1.2"
     },
     "scripts": {
-        "test": "mocha -R list"
+        "test": "mocha -R spec"
     }
 }
