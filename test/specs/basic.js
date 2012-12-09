@@ -128,16 +128,24 @@ define(['dejavu/Class', 'src/MixableEventsEmitter', 'src/EventsEmitter'], functi
             it('should remove the specified listener', function () {
 
                 var listener = function () {
-                    stack.push('listener');
-                },  other = function () {
-                    stack.push('other');
-                },
+                        stack.push('listener');
+                    },
+                    other = function () {
+                        stack.push('other');
+                    },
+                    once = function () {
+                        stack.push('once');
+                    },
                     context = {};
 
                 emitter.on('dummy', listener);
                 emitter.on('click', listener, context);
                 emitter.on('click', other);
+                emitter.once('click', once, context);
+                emitter.once('click', once);
                 emitter.off('click', listener);
+                emitter.off('click', once);
+                emitter.off('click', once, context);
                 emitter.emit('click');
                 emitter.off('click', listener, context);
                 emitter.emit('click');

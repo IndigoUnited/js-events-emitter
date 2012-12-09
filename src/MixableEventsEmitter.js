@@ -23,7 +23,7 @@ define(['dejavu/AbstractClass', './SubscribeInterface', 'amd-utils/lang/toArray'
             var events = this._listeners[event] = this._listeners[event] || [];
 
             if (this._getListenerIndex(event, fn, $context) === -1) {
-                events.push({ fn: fn, context: $context });
+                events.push({ fn: fn, callable: fn, context: $context });
             }
 
             return this;
@@ -33,10 +33,17 @@ define(['dejavu/AbstractClass', './SubscribeInterface', 'amd-utils/lang/toArray'
          * {@inheritDoc}
          */
         once: function (event, fn, $context) {
-            var events = this._listeners[event] = this._listeners[event] || [];
+            var events = this._listeners[event] = this._listeners[event] || [],
+                callable,
+                that = this;
 
             if (this._getListenerIndex(event, fn, $context) === -1) {
-                events.push({ fn: fn, context: $context, once: true });
+                callable = function () {
+                    fn.apply(this, arguments);
+                    that.off(event, fn, $context);
+                };
+
+                events.push({ fn: fn, callable: callable, context: $context });
             }
 
             return this;
@@ -53,7 +60,7 @@ define(['dejavu/AbstractClass', './SubscribeInterface', 'amd-utils/lang/toArray'
 
                 if (index !== -1) {
                     if (this._firing) {
-                        this._listeners[$event][index].fn = this._listeners[$event][index].context = null;
+                        this._listeners[$event][index] = {};
                     } else {
                         if (this._listeners[$event].length === 1) {
                             delete this._listeners[$event];
@@ -93,11 +100,7 @@ define(['dejavu/AbstractClass', './SubscribeInterface', 'amd-utils/lang/toArray'
                     curr = listeners[x];
 
                     if (curr.fn) {
-                        curr.fn.apply(curr.context || this, params);
-                        if (curr.once) {
-                            listeners.splice(x, 1);
-                            x -= 1;
-                        }
+                        curr.callable.apply(curr.context || this, params);
                     } else {
                         listeners.splice(x, 1);
                         x -= 1;
