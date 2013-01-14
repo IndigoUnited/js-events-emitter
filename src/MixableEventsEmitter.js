@@ -5,7 +5,7 @@
  *
  * @author André Cruz <andremiguelcruz@msn.com>
  */
-define(['dejavu/AbstractClass', './SubscribeInterface', 'amd-utils/lang/toArray'], function (AbstractClass, SubscribeInterface, toArray) {
+define(['dejavu/AbstractClass', './SubscribeInterface', 'mout/lang/toArray'], function (AbstractClass, SubscribeInterface, toArray) {
 
     'use strict';
 

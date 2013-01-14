@@ -68,12 +68,12 @@ To run them simply open the `test/tester.html` file in the browser.
 
 ## Dependencies ##
 
-EventsEmitter depends on [amd-utils](https://github.com/millermedeiros/amd-utils) and [dejavu](https://github.com/IndigoUnited/dejavu)
+EventsEmitter depends on [mout](https://github.com/mout/mout) and [dejavu](https://github.com/IndigoUnited/dejavu)
 If you use RequireJS specify them like this:
 
 ```js
     paths : {
-        'amd-utils': '../vendor/amd-utils/src',
+        'mout': '../vendor/mout/src',
         'dejavu': '../vendor/dejavu/dist/amd/strict'  // use the loose version in production
     },
 ```
