@@ -1,4 +1,7 @@
-define(['dejavu/Class', 'src/MixableEventsEmitter', 'src/EventsEmitter'], function (Class, MixableEventsEmitter, EventsEmitter) {
+define([
+    'src/MixableEventsEmitter',
+    'src/EventsEmitter'
+], function (MixableEventsEmitter, EventsEmitter) {
 
     'use strict';
 
@@ -76,14 +79,15 @@ define(['dejavu/Class', 'src/MixableEventsEmitter', 'src/EventsEmitter'], functi
 
             it('should not duplicate the same listener', function () {
 
+                function SomeClass() {}
+
+                SomeClass.prototype.foo = function () {
+                    stack.push('foo');
+                };
+
                 var listener = function () {
                     stack.push('listener');
                 },
-                    SomeClass = Class.declare({
-                        foo: function () {
-                            stack.push('foo');
-                        }
-                    }),
                     some1 = new SomeClass(),
                     some2 = new SomeClass();
 

@@ -1,6 +1,5 @@
 var paths = {
     'mout': '../components/mout/src',
-    'dejavu': '../components/dejavu/dist/amd/strict',
     'domReady': '../node_modules/domReady/domReady',
     'src': '../src'
 },
