@@ -62,21 +62,6 @@ Then simply open the `test/tester.html` file in the browser.
 To run them simply open the `test/tester.html` file in the browser.
 
 
-
-## Dependencies
-
-EventsEmitter depends on [mout](https://github.com/mout/mout) and [dejavu](https://github.com/IndigoUnited/dejavu)
-If you use RequireJS specify them like this:
-
-```js
-    paths : {
-        'mout': '../vendor/mout/src',
-        'dejavu': '../vendor/dejavu/dist/amd/strict'  // use the loose version in production
-    },
-```
-
-
-
 ## License
 
 Released under the [MIT License](http://www.opensource.org/licenses/mit-license.php).

@@ -3,11 +3,31 @@
  * This is an abstract class because it is meant to be mixed in and not used as a standalone class.
  * This was necessary because the fireEvent had to be declared protected.
  */
-define([
-    'mout/lang/toArray'
-], function (toArray) {
+define(function () {
 
     'use strict';
+
+    /**
+     * Convert array-like object into array
+     * 
+     * @param  {mixed} args
+     * 
+     * @return {Array}
+     */
+    function toArray(args) {
+        var val = Array.prototype.slice.call(args),
+            kind = Object.prototype.toString.call(val),
+            arr;
+
+        if (kind === '[object Array]') {
+            arr = val;
+        } else {
+            arr = [];
+            arr.push(val);
+        }
+
+        return arr;
+    }
 
     function MixableEventsEmitter() {
         this._listeners = {};

@@ -1,5 +1,4 @@
 var paths = {
-    'mout': '../components/mout/src',
     'domReady': '../node_modules/domReady/domReady',
     'src': '../src'
 },

@@ -1,8 +1,0 @@
-{
-  "name": "events-emitter",
-  "version": "0.0.2",
-  "main": "src/",
-  "dependencies": {
-    "mout": "~0.3.0"
-  }
-}
