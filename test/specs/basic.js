@@ -8,7 +8,6 @@ define([
     var expect = global.expect;
 
     describe('EventsEmitter', function () {
-
         var emitter,
             context = {},
             stack,
@@ -25,9 +24,7 @@ define([
         });
 
         describe('.on()', function () {
-
             it('should add the specified listener to an event', function () {
-
                 emitter.on('click', function (arg1, arg2, arg3) {
                     stack.push('one');
                     if (arg1) {
@@ -68,17 +65,14 @@ define([
             });
 
             it('should be able to specify the desired context', function () {
-
                 emitter.on('click', function () {
                     expect(this).to.be.equal(context);
                 }, context);
 
                 emitter.emit('click');
-
             });
 
             it('should not duplicate the same listener', function () {
-
                 function SomeClass() {}
 
                 SomeClass.prototype.foo = function () {
@@ -101,15 +95,11 @@ define([
                 emitter.emit('foo');
 
                 expect(stack).to.eql(['listener', 'foo', 'foo']);
-
             });
-
         });
 
         describe('.once(event, fn, $context', function () {
-
             it('should listen only once', function () {
-
                 emitter.on('click', function () {
                     stack.push('one');
                 });
@@ -122,15 +112,12 @@ define([
                 emitter.emit('click');
 
                 expect(stack).to.eql(['one', 'two', 'one']);
-
             });
 
         });
 
         describe('.off(event, fn, $context)', function () {
-
             it('should remove the specified listener', function () {
-
                 var listener = function () {
                         stack.push('listener');
                     },
@@ -159,13 +146,11 @@ define([
                 emitter.emit('dummy');
 
                 expect(stack).to.eql(['listener', 'other', 'other', 'listener']);
-
             });
 
         });
 
         describe('.off($event)', function () {
-
             var listener1 = function () {
                 stack.push('listener1');
             },
@@ -177,7 +162,6 @@ define([
                 };
 
             it('should remove all the listeners of a given event', function () {
-
                 emitter.on('click', listener1);
                 emitter.on('click', listener2);
                 emitter.on('dummy', listener3);
@@ -189,11 +173,9 @@ define([
                 emitter.emit('dummy');
 
                 expect(stack).to.eql(['listener1', 'listener2', 'listener3', 'listener3']);
-
             });
 
             it('should remove all the listeners (if not event is specified)', function () {
-
                 emitter.on('click', listener1);
                 emitter.on('click', listener2);
                 emitter.on('dummy', listener3);
@@ -205,15 +187,12 @@ define([
                 emitter.emit('dummy');
 
                 expect(stack).to.eql(['listener1', 'listener2', 'listener3']);
-
             });
 
         });
 
         describe('.has()', function () {
-
             it('should should return true for added listeners and false for not added listeners', function () {
-
                 var someFunc = function () {},
                     otherFunc = function () {};
 
@@ -234,15 +213,12 @@ define([
                 emitter.off('click', otherFunc);
 
                 expect(emitter.has('click')).to.be.equal(false);
-
             });
 
         });
 
         describe('.emit()', function () {
-
             it('should respect the order of emit calls', function () {
-
                 var listener = function () {
                     stack.push('one');
                 },
@@ -266,11 +242,9 @@ define([
                 emitter.emit('some');
 
                 expect(stack).to.eql(['one', 'four', 'two', 'three']);
-
             });
 
             it('should call listeners added while dispatching', function () {
-
                 var listener = function () {
                     stack.push('one');
                     emitter.on('some', listener2);
@@ -282,11 +256,9 @@ define([
                 emitter.on('some', listener);
                 emitter.emit('some');
                 expect(stack).to.eql(['one', 'two']);
-
             });
 
             it('should not call listeners removed while dispatching', function () {
-
                 var listener = function () {
                     stack.push('one');
                     emitter.off('other', listener2);
@@ -318,11 +290,9 @@ define([
 
                 emitter.emit('other');
                 expect(stack).to.eql(['one', 'three', 'four', 'five', 'six']);
-
             });
 
             it('should handle removing all listeners while dispatching', function () {
-
                 var listener = function () {
                     stack.push('one');
                     emitter.off();
@@ -362,11 +332,9 @@ define([
 
                 emitter.emit('some');
                 expect(stack).to.eql(['one']);
-
             });
 
             it('should not catch any inner listener error', function () {
-
                 emitter.on('err', function () {
                     throw new Error('dummy error');
                 });
@@ -374,11 +342,9 @@ define([
                 expect(function () {
                     emitter.emit('err');
                 }).to.throwException(/dummy error/);
-
             });
 
             it('should behave normally after a listener throws an error', function () {
-
                 var listener = function () {
                     stack.push('one');
                 },
@@ -407,15 +373,12 @@ define([
                 }).to.throwException(/dummy error/);
 
                 expect(stack).to.eql(['one', 'four', 'two', 'one', 'four', 'two']);
-
             });
 
         });
 
         describe('.forEach()', function () {
-
             it('should cycle through all the events', function () {
-
                 emitter.forEach(function (event, fn) {
                     stack.push(event, fn);
                 });
@@ -443,7 +406,6 @@ define([
                 emitter.emit('some');
 
                 expect(stack).to.eql(['some', listener, 'some', listener2, 'some', listener3, 'other', listener4, 'some', listener, 'other', listener4]);
-
             });
 
             it('should be able to execute the handler with the given context', function () {
@@ -464,9 +426,6 @@ define([
                 expect(stack[0]).to.be.eql(emitter);
                 expect(stack[1]).to.be.eql(context);
             });
-
         });
-
     });
-
 });

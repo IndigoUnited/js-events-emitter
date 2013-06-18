@@ -1,0 +1,10 @@
+{
+  "name": "events-emitter",
+  "version": "0.0.0",
+  "main": "src/",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components"
+  ]
+}
