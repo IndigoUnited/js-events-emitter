@@ -7,32 +7,7 @@ define(function () {
 
     'use strict';
 
-    /**
-     * Convert array-like object into array
-     *
-     * @param  {mixed} args
-     *
-     * @return {Array}
-     */
-    function toArray(args) {
-        var val = Array.prototype.slice.call(args),
-            kind = Object.prototype.toString.call(val),
-            arr;
-
-        if (kind === '[object Array]') {
-            arr = val;
-        } else {
-            arr = [];
-            arr.push(val);
-        }
-
-        return arr;
-    }
-
-    function MixableEventsEmitter() {
-        this._listeners = {};
-        this._firing = false;
-    }
+    function MixableEventsEmitter() {}
 
     /**
      * Adds a new event listener.
@@ -45,9 +20,12 @@ define(function () {
      * @return {MixableEventsEmitter} The instance itself to allow chaining
      */
     MixableEventsEmitter.prototype.on = function (event, fn, context) {
-        var events = this._listeners[event] = this._listeners[event] || [];
+        var events;
 
-        if (this._getListenerIndex(event, fn, context) === -1) {
+        this._listeners = this._listeners || {};
+        events = this._listeners[event] = this._listeners[event] || [];
+
+        if (getListenerIndex.call(this, event, fn, context) === -1) {
             events.push({ fn: fn, callable: fn, context: context });
         }
 
@@ -65,11 +43,14 @@ define(function () {
      * @return {MixableEventsEmitter} The instance itself to allow chaining
      */
     MixableEventsEmitter.prototype.once = function (event, fn, context) {
-        var events = this._listeners[event] = this._listeners[event] || [],
+        var events,
             callable,
             that = this;
 
-        if (this._getListenerIndex(event, fn, context) === -1) {
+        this._listeners = this._listeners || {};
+        events = this._listeners[event] = this._listeners[event] || [];
+
+        if (getListenerIndex.call(this, event, fn, context) === -1) {
             callable = function () {
                 fn.apply(this, arguments);
                 that.off(event, fn, context);
@@ -93,10 +74,12 @@ define(function () {
      * @return {MixableEventsEmitter} The instance itself to allow chaining
      */
     MixableEventsEmitter.prototype.off = function (event, fn, context) {
+        this._listeners = this._listeners || {};
+
         if (!fn && arguments.length < 2) {
-            this._clearListeners(event);
+            clearListeners.call(this, event);
         } else {
-            var index = this._getListenerIndex(event, fn, context);
+            var index = getListenerIndex.call(this, event, fn, context);
 
             if (index !== -1) {
                 if (this._firing) {
@@ -124,15 +107,16 @@ define(function () {
      * @return {MixableEventsEmitter} The instance itself to allow chaining
      */
     MixableEventsEmitter.prototype._emit = function (event) {
-        var listeners = this._listeners[event],
+        var listeners,
             params,
             x,
             curr;
 
-        if (listeners) {
-            params = toArray(arguments),
-            params.shift();
+        this._listeners = this._listeners || {};
+        listeners = this._listeners[event];
 
+        if (listeners) {
+            params = Array.prototype.slice.call(arguments, 1),
             this._firing = true;
 
             for (x = 0; x < listeners.length; x += 1) {
@@ -165,7 +149,8 @@ define(function () {
      *
      * @return {Number} The index of the listener if found or -1 if not found
      */
-    MixableEventsEmitter.prototype._getListenerIndex = function (event, fn, context) {
+    function getListenerIndex(event, fn, context) {
+        /*jshint validthis:true*/
         var events = this._listeners[event],
             x,
             curr;
@@ -180,7 +165,7 @@ define(function () {
         }
 
         return -1;
-    };
+    }
 
     /**
      * Removes all listeners of the given event name.
@@ -188,7 +173,8 @@ define(function () {
      *
      * @param {String} [event] The event name
      */
-    MixableEventsEmitter.prototype._clearListeners = function (event) {
+    function clearListeners(event) {
+        /*jshint validthis:true*/
         if (event) {
             if (this._firing) {
                 this._listeners[event].length = 0;
@@ -204,7 +190,12 @@ define(function () {
                 this._listeners = {};
             }
         }
-    };
+    }
+
+    // Export some control functions that are used internally
+    // They could be useful to be used by others
+    MixableEventsEmitter.getListenerIndex = getListenerIndex;
+    MixableEventsEmitter.clearListeners = clearListeners;
 
     return MixableEventsEmitter;
 });

@@ -8,9 +8,9 @@ define([
 
     'use strict';
 
-    function EventsEmmiter() {
-        MixableEventsEmitter.call(this);
-    }
+    var getListenerIndex = MixableEventsEmitter.getListenerIndex;
+
+    function EventsEmmiter() {}
 
     EventsEmmiter.prototype = Object.create(MixableEventsEmitter.prototype);
     EventsEmmiter.prototype.constructor = EventsEmmiter;
@@ -52,7 +52,7 @@ define([
                 return false;
             }
         } else {
-            return this._getListenerIndex(event, fn, context) !== -1;
+            return getListenerIndex.call(this, event, fn, context) !== -1;
         }
 
         return this;
