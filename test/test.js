@@ -1,26 +1,25 @@
-/*global describe, before, it, beforeEach*/
+/*global describe, before, it, afterEach*/
 
 define([
     'expect',
-    'src/MixableEventsEmitter',
     'src/EventsEmitter'
-], function (expect, MixableEventsEmitter, EventsEmitter) {
+], function (expect, EventsEmitter) {
 
     'use strict';
 
     describe('EventsEmitter', function () {
         var emitter,
             context = {},
-            stack,
-            args;
+            stack = [],
+            args = [];
 
         before(function () {
             emitter = new EventsEmitter();
         });
 
-        beforeEach(function () {
+        afterEach(function () {
             emitter.off();
-            stack = [],
+            stack = [];
             args = [];
         });
 

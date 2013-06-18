@@ -9,9 +9,9 @@ define(function () {
 
     /**
      * Convert array-like object into array
-     * 
+     *
      * @param  {mixed} args
-     * 
+     *
      * @return {Array}
      */
     function toArray(args) {

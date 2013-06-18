@@ -9,7 +9,7 @@ define([
     'use strict';
 
     function EventsEmmiter() {
-
+        MixableEventsEmitter.call(this);
     }
 
     EventsEmmiter.prototype = Object.create(MixableEventsEmitter.prototype);
