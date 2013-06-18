@@ -45,21 +45,32 @@ Calls `fn` with `$context` foreach iteration.
 
 
 
-## Testing
+## Tests
 
-The tests are built on top of [mocha](http://visionmedia.github.com/mocha/) test framework and the [expect.js](https://github.com/LearnBoost/expect.js) assert library.
+1. `bower install`
+2. `npm install`
+3. `npm test`
 
-First run `npm install` and `bower install` to install all the tools needed.
-Then simply open the `test/tester.html` file in the browser.
-
-### Run in node
-
-`$ npm test`
+You will need [bower](https://github.com/bower/bower) to install the library dev dependencies.
 
 
-### Run in the browser
 
-To run them simply open the `test/tester.html` file in the browser.
+## How to use
+
+For now, this library is only available in the [AMD](https://github.com/amdjs/amdjs-api/wiki/AMD) format.
+
+If you use RequireJS specify them like this:
+
+```js
+// ...
+paths : {
+   'events-emitter': '../components/events-emitter/src'
+}
+// ...
+```
+
+Note that if you want to support `IE8` you will need to install [es5-shim](https://github.com/kriskowal/es5-shim.git) and require both `es5-shim` and `es5-sham` with your AMD loader before requiring this library.
+
 
 
 ## License

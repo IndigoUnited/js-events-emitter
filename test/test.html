@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>address</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="../components/mocha/mocha.css" />
+    </head>
+    <body>
+        <div id="mocha"></div>
+        <script src="../components/mocha/mocha.js"></script>
+        <!-- Testem support -->
+        <script type="text/javascript">
+        if (location.hash.indexOf('#testem') !== -1) {
+            document.write('<script src="/testem.js"></'+'script>');
+        }
+        </script>
+        <script src="../components/requirejs/require.js"></script>
+        <script>
+            mocha.setup('bdd');
+
+            require({
+                baseUrl: './',
+                paths: {
+                    'es5-shim': '../components/es5-shim/es5-shim',
+                    'es5-sham': '../components/es5-shim/es5-sham',
+                    'expect': '../components/expect/expect',
+                    'src': '../src'
+                },
+                shim: {
+                    'expect': {
+                        exports: 'expect'
+                    }
+                },
+                waitSeconds: (window.location.protocol === 'file:' || window.location.href.indexOf('://localhost') !== -1) ? 5 : 45, // Fail early locally
+                urlArgs: 'bust=' + (+new Date())
+            });
+
+            require(['es5-shim', 'es5-sham'], function () {
+                require(['./test'], mocha.run.bind(mocha));
+            });
+        </script>
+    </head>
+    <body>
+        <div id="mocha"></div>
+    </body>
+</html>

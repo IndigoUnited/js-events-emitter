@@ -4,14 +4,11 @@
   "repository": {
     "type": "git",
     "url": "git://github.com/IndigoUnited/events-emitter"
-  }
+  },
   "devDependencies": {
-    "mocha": "~1.7.3",
-    "expect.js": "~0.2.0",
-    "domReady": "git://github.com/requirejs/domReady.git",
-    "requirejs": "~2.1.2"
+    "testem": "~0.2.98"
   },
   "scripts": {
-    "test": "mocha -R spec"
+    "test": "testem ci"
   }
 }
