@@ -1,6 +1,10 @@
 {
   "name": "events-emitter",
-  "version": "0.0.1",
+  "version": "0.0.0",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/IndigoUnited/events-emitter"
+  }
   "devDependencies": {
     "mocha": "~1.7.3",
     "expect.js": "~0.2.0",

@@ -13,6 +13,7 @@ define([
     }
 
     EventsEmmiter.prototype = Object.create(MixableEventsEmitter.prototype);
+    EventsEmmiter.prototype.constructor = EventsEmmiter;
 
     /**
      * Emits an event.
