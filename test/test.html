@@ -21,6 +21,7 @@
                     'es5-shim': '../components/es5-shim/es5-shim',
                     'es5-sham': '../components/es5-shim/es5-sham',
                     'expect': '../components/expect/expect',
+                    'dom-ready': '../components/requirejs-domready/domReady',
                     'src': '../src'
                 },
                 shim: {
@@ -32,7 +33,7 @@
                 urlArgs: 'bust=' + (+new Date())
             });
 
-            require(['es5-shim', 'es5-sham'], function () {
+            require(['dom-ready!', 'es5-shim', 'es5-sham'], function () {
                 require(['./test'], mocha.run.bind(mocha));
             });
         </script>

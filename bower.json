@@ -12,6 +12,7 @@
     "expect": "~0.2.0",
     "es5-shim": "~2.1.0",
     "mocha": "~1.11.0",
-    "requirejs": "~2.1.6"
+    "requirejs": "~2.1.6",
+    "requirejs-domready": "~2.0.1"
   }
 }
