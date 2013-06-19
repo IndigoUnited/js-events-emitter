@@ -9,6 +9,6 @@
     "testem": "~0.2.98"
   },
   "scripts": {
-    "test": "testem ci"
+    "test": "testem ci --skip chromium"
   }
 }

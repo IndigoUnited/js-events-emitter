@@ -1,7 +1,6 @@
-# EventsEmitter [![Build Status](https://secure.travis-ci.org/IndigoUnited/events-emitter.png?branch=master)](http://travis-ci.org/IndigoUnited/events-emitter))
+# EventsEmitter [![Build Status](https://secure.travis-ci.org/IndigoUnited/events-emitter.png?branch=master)](http://travis-ci.org/IndigoUnited/events-emitter)
 
 Simple library that allows to listen and emit events.
-It is built on top of [AMD](https://github.com/amdjs/amdjs-api/wiki/AMD).
 
 
 
