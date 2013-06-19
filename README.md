@@ -1,5 +1,4 @@
-EventsEmitter
----
+# EventsEmitter [![Build Status](https://secure.travis-ci.org/IndigoUnited/events-emitter.png?branch=master)](http://travis-ci.org/IndigoUnited/events-emitter))
 
 Simple library that allows to listen and emit events.
 It is built on top of [AMD](https://github.com/amdjs/amdjs-api/wiki/AMD).
@@ -45,16 +44,6 @@ Calls `fn` with `$context` foreach iteration.
 
 
 
-## Tests
-
-1. `bower install`
-2. `npm install`
-3. `npm test`
-
-You will need [bower](https://github.com/bower/bower) to install the library dev dependencies.
-
-
-
 ## How to use
 
 For now, this library is only available in the [AMD](https://github.com/amdjs/amdjs-api/wiki/AMD) format.
@@ -70,6 +59,16 @@ paths : {
 ```
 
 Note that if you want to support `IE8` or lower you will need to install [es5-shim](https://github.com/kriskowal/es5-shim.git) and require both `es5-shim` and `es5-sham` with your AMD loader before requiring this library.
+
+
+
+## Tests
+
+1. `bower install`
+2. `npm install`
+3. `npm test`
+
+You will need [bower](https://github.com/bower/bower) to install the library dev dependencies.
 
 
 
