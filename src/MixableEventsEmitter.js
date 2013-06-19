@@ -102,7 +102,8 @@ define(function () {
     /**
      * Emits an event.
      *
-     * @param {String} event The event name
+     * @param {String}   event The event name
+     * @param {...mixed} [args] The arguments to pass along with the event
      *
      * @return {MixableEventsEmitter} The instance itself to allow chaining
      */

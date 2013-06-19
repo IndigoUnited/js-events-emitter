@@ -18,6 +18,9 @@ define([
     /**
      * Emits an event.
      *
+     * @param {String}   event The event name
+     * @param {...mixed} [args] The arguments to pass along with the event
+     *
      * @return {EventsEmitter} The instance itself to allow chaining
      */
     EventsEmmiter.prototype.emit = function () {
@@ -65,7 +68,7 @@ define([
      * @param {Function} fn        The function to be called for each iteration
      * @param {Object}   [context] The context to be used while calling the function, defaults to the instance
      *
-     * @return {MixableEventsEmitter} The instance itself to allow chaining
+     * @return {EventsEmmiter} The instance itself to allow chaining
      */
     EventsEmmiter.prototype.forEach = function (fn, context) {
         var key,
