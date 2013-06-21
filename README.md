@@ -6,29 +6,27 @@ Simple library that allows to listen and emit events.
 
 ## API
 
-Optional parameters are prefixed with an $.
+### .on(event, fn, [context])
 
-### .on(event, fn, $context)
-
-Register an `event` listener `fn` (with the option to pass a `$context`).
+Register an `event` listener `fn` (with the option to pass a `context`).
 Duplicate listeners are discarded.
 
 
-### .once(event, fn, $context)
+### .once(event, fn, [context])
 
-Register an `event` listener `fn` that runs only once (with the option to pass a `$context`).
+Register an `event` listener `fn` that runs only once (with the option to pass a `context`).
 Duplicate listeners are discarded.
 
-### .off($event, $fn, $context)
+### .off([event], [fn], [context])
 
-Remove `event` listener `$fn` that was added with `$context`.
-If no `$fn` is passed, removes all listeners for `$event` or all the emitter listeners if no `$event` is passed.
+Remove `event` listener `fn` that was added with `context`.
+If no `fn` is passed, removes all listeners for `event` or all the emitter listeners if no `event` is passed.
 
 
-### .has(event, $fn)
+### .has(event, [fn])
 
-Checks if the listener `$fn` for event `event` is registered.
-If no `$fn` is passed, returns true if at least one listener is registered for `event`.
+Checks if the listener `fn` for event `event` is registered.
+If no `fn` is passed, returns true if at least one listener is registered for `event`.
 
 
 ### .emit(event, ...)
@@ -36,10 +34,10 @@ If no `$fn` is passed, returns true if at least one listener is registered for `
 Emit an `event` with variable option args.
 
 
-### .forEach(fn, $context)
+### .forEach(fn, [context])
 
 Cycles through all the events and its listeners.
-Calls `fn` with `$context` foreach iteration.
+Calls `fn` with `context` foreach iteration.
 
 
 
