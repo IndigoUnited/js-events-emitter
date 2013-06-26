@@ -1,4 +1,4 @@
-/*global describe, before, it, afterEach*/
+/*global describe, it, before, afterEach*/
 
 define([
     'expect',
