@@ -41,6 +41,8 @@ define([
         var events,
             x;
 
+        this._listeners = this._listeners || {};
+
         if (!fn) {
             events = this._listeners[event];
             if (!this._firing) {
@@ -77,6 +79,7 @@ define([
             currEvent,
             curr;
 
+        this._listeners = this._listeners || {};
         context = context || this;
 
         for (key in this._listeners) {
