@@ -1,4 +1,4 @@
-/*global describe, it, before, afterEach*/
+/*global describe, it, beforeEach*/
 
 define([
     'expect',
@@ -9,16 +9,12 @@ define([
 
     describe('EventsEmitter', function () {
         var emitter,
-            context = {},
             stack = [],
-            args = [];
+            args = [],
+            context = {};
 
-        before(function () {
+        beforeEach(function () {
             emitter = new EventsEmitter();
-        });
-
-        afterEach(function () {
-            emitter.off();
             stack = [];
             args = [];
         });
