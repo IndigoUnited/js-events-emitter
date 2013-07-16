@@ -51,7 +51,7 @@ If you use RequireJS specify them like this:
 ```js
 // ...
 paths : {
-   'events-emitter': '../components/events-emitter/src'
+   'events-emitter': '../bower_components/events-emitter/src'
 }
 // ...
 ```
