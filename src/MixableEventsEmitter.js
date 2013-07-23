@@ -7,6 +7,8 @@ define(function () {
 
     'use strict';
 
+    var hasOwn = Object.prototype.hasOwnProperty;
+
     function MixableEventsEmitter() {}
 
     /**
@@ -123,7 +125,8 @@ define(function () {
             for (x = 0; x < listeners.length; x += 1) {
                 curr = listeners[x];
 
-                if (curr.fn) {
+                // Check if the listener has been deleted meanwhile
+                if (hasOwn.call(curr, 'fn')) {
                     curr.callable.apply(curr.context || this, params);
                 } else {
                     listeners.splice(x, 1);
