@@ -379,14 +379,19 @@ define([
                     stack.push(event, fn);
                 });
 
-                var listener = function () {
+                var ctx = {},
+                    listener = function () {
                     emitter.forEach(function (event, fn) {
                         stack.push(event, fn);
                     });
                     emitter.off('some', listener2);
                     emitter.off('some', listener3);
-                    emitter.forEach(function (event, fn) {
+                    emitter.forEach(function (event, fn, context) {
                         stack.push(event, fn);
+
+                        if (event === 'other') {
+                            expect(context).to.be(ctx);
+                        }
                     });
 
                 },
@@ -397,7 +402,7 @@ define([
                 emitter.on('some', listener);
                 emitter.on('some', listener2);
                 emitter.on('some', listener3);
-                emitter.on('other', listener4);
+                emitter.on('other', listener4, ctx);
 
                 emitter.emit('some');
 

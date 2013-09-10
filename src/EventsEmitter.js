@@ -89,7 +89,7 @@ define([
             for (x = 0; x < length; x += 1) {
                 curr = currEvent[x];
                 if (curr.fn) {
-                    fn.call(context, key, curr.fn);
+                    fn.call(context, key, curr.fn, curr.context);
                 }
             }
         }
