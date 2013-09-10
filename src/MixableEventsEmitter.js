@@ -7,6 +7,9 @@ define(function () {
 
     'use strict';
 
+    var hasOwn = Object.prototype.hasOwnProperty,
+        slice = Array.prototype.slice;
+
     function MixableEventsEmitter() {}
 
     /**
@@ -102,7 +105,7 @@ define(function () {
     /**
      * Emits an event.
      *
-     * @param {String}   event The event name
+     * @param {String}   event  The event name
      * @param {...mixed} [args] The arguments to pass along with the event
      *
      * @return {MixableEventsEmitter} The instance itself to allow chaining
@@ -117,13 +120,14 @@ define(function () {
         listeners = this._listeners[event];
 
         if (listeners) {
-            params = Array.prototype.slice.call(arguments, 1),
+            params = slice.call(arguments, 1),
             this._firing = true;
 
             for (x = 0; x < listeners.length; x += 1) {
                 curr = listeners[x];
 
-                if (curr.fn) {
+                // Check if the listener has been deleted meanwhile
+                if (hasOwn.call(curr, 'fn')) {
                     curr.callable.apply(curr.context || this, params);
                 } else {
                     listeners.splice(x, 1);
@@ -137,6 +141,8 @@ define(function () {
 
             this._firing = false;
         }
+        
+        return this;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////
@@ -175,6 +181,8 @@ define(function () {
      * @param {String} [event] The event name
      */
     function clearListeners(event) {
+        var key;
+
         /*jshint validthis:true*/
         if (event) {
             if (this._firing) {
@@ -184,7 +192,7 @@ define(function () {
             }
         } else {
             if (this._firing) {
-                for (var key in this._listeners) {
+                for (key in this._listeners) {
                     this._listeners[key].length = 0;
                 }
             } else {
