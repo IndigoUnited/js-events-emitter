@@ -48,7 +48,7 @@ define([
             if (!this._firing) {
                 return !!events;
             } else {
-                for (x = events.length - 1; x >= 0; x -= 1) {
+                for (x = (events ? events.length : 0) - 1; x >= 0; x -= 1) {
                     if (events[x].fn) {
                         return true;
                     }
