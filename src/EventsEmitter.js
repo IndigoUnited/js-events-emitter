@@ -45,22 +45,19 @@ define([
 
         if (!fn) {
             events = this._listeners[event];
-            if (!this._firing) {
-                return !!events;
-            } else {
-                for (x = (events ? events.length : 0) - 1; x >= 0; x -= 1) {
+
+            if (events) {
+                for (x = events.length - 1; x >= 0; x -= 1) {
                     if (events[x].fn) {
                         return true;
                     }
                 }
-
-                return false;
             }
-        } else {
-            return getListenerIndex.call(this, event, fn, context) !== -1;
+
+            return false;
         }
 
-        return this;
+        return getListenerIndex.call(this, event, fn, context) !== -1;
     };
 
     /**

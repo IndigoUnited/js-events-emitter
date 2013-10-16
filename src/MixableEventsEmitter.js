@@ -77,12 +77,14 @@ define(function () {
      * @return {MixableEventsEmitter} The instance itself to allow chaining
      */
     MixableEventsEmitter.prototype.off = function (event, fn, context) {
+        var index;
+
         this._listeners = this._listeners || {};
 
         if (!fn && arguments.length < 2) {
             clearListeners.call(this, event);
         } else {
-            var index = getListenerIndex.call(this, event, fn, context);
+            index = getListenerIndex.call(this, event, fn, context);
 
             if (index !== -1) {
                 if (this._firing) {
@@ -114,13 +116,15 @@ define(function () {
         var listeners,
             params,
             x,
-            curr;
+            curr,
+            wasFiring;
 
         this._listeners = this._listeners || {};
         listeners = this._listeners[event];
 
         if (listeners) {
-            params = slice.call(arguments, 1),
+            params = slice.call(arguments, 1);
+            wasFiring = this._firing;
             this._firing = true;
 
             for (x = 0; x < listeners.length; x += 1) {
@@ -139,9 +143,9 @@ define(function () {
                 delete this._listeners[event];
             }
 
-            this._firing = false;
+            this._firing = wasFiring;
         }
-        
+
         return this;
     };
 

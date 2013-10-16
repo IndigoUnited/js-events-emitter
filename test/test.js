@@ -188,6 +188,7 @@ define([
         });
 
         describe('.has()', function () {
+
             it('should should return true for added listeners and false for not added listeners', function () {
                 var someFunc = function () {},
                     otherFunc = function () {};
@@ -211,6 +212,16 @@ define([
                 expect(emitter.has('click')).to.be.equal(false);
             });
 
+            it('should return false even if there are "junk" listeners', function () {
+                var fn = function () {
+                    emitter.off('click', fn);
+                };
+
+                emitter.on('click', fn);
+                emitter.emit('click');
+
+                expect(emitter.has('click')).to.be.equal(false);
+            });
         });
 
         describe('.emit()', function () {
