@@ -57,7 +57,6 @@ define([
 
                 expect(stack).to.eql(['one', 'two']);
                 expect(args).to.eql([1, 2, 3, 1, 2, 3]);
-
             });
 
             it('should be able to specify the desired context', function () {
@@ -94,7 +93,7 @@ define([
             });
         });
 
-        describe('.once(event, fn, $context', function () {
+        describe('.once(event, fn, $context)', function () {
             it('should listen only once', function () {
                 emitter.on('click', function () {
                     stack.push('one');
@@ -109,7 +108,6 @@ define([
 
                 expect(stack).to.eql(['one', 'two', 'one']);
             });
-
         });
 
         describe('.off(event, fn, $context)', function () {
@@ -143,7 +141,70 @@ define([
 
                 expect(stack).to.eql(['listener', 'other', 'other', 'listener']);
             });
+        });
 
+        describe('.off($event.namespace, fn, $context)', function () {
+            it('should remove the specified listener', function () {
+                var listener = function () {
+                        stack.push('listener');
+                    },
+                    other = function () {
+                        stack.push('other');
+                    },
+                    once = function () {
+                        stack.push('once');
+                    },
+                    context = {};
+
+                emitter.on('dummy.foo', listener);
+                emitter.on('click.foo', listener, context);
+                emitter.on('click.foo', other);
+                emitter.once('click.foo', once, context);
+                emitter.once('click.foo', once);
+                emitter.off('click.foo', listener);
+                emitter.off('click.foo', once);
+                emitter.off('click.foo', once, context);
+                emitter.emit('click');
+                emitter.off('click.foo', listener, context);
+                emitter.emit('click');
+                emitter.off('click.foo', other);
+                emitter.emit('click');
+
+                emitter.emit('dummy');
+
+                expect(stack).to.eql(['listener', 'other', 'other', 'listener']);
+            });
+
+            it('should remove the specified listener, just by its namespace', function () {
+                var listener = function () {
+                        stack.push('listener');
+                    },
+                    other = function () {
+                        stack.push('other');
+                    },
+                    once = function () {
+                        stack.push('once');
+                    },
+                    context = {};
+
+                emitter.on('dummy.foo', listener);
+                emitter.on('click.foo', listener, context);
+                emitter.on('click.foo', other);
+                emitter.once('click.foo', once, context);
+                emitter.once('click.foo', once);
+                emitter.off('click.foo', listener);
+                emitter.off('.foo', once);
+                emitter.off('.foo', once, context);
+                emitter.emit('click');
+                emitter.off('.foo', listener, context);
+                emitter.emit('click');
+                emitter.off('.foo', other);
+                emitter.emit('click');
+
+                emitter.emit('dummy');
+
+                expect(stack).to.eql(['listener', 'other', 'other', 'listener']);
+            });
         });
 
         describe('.off($event)', function () {
@@ -184,11 +245,51 @@ define([
 
                 expect(stack).to.eql(['listener1', 'listener2', 'listener3']);
             });
+        });
 
+        describe('.off($event.namespace)', function () {
+            var listener1 = function () {
+                stack.push('listener1');
+            },
+                listener2 = function () {
+                    stack.push('listener2');
+                },
+                listener3 = function () {
+                    stack.push('listener3');
+                };
+
+            it('should remove all the listeners of a given event just on the passed namespace', function () {
+                emitter.on('click', listener1);
+                emitter.on('click.foo', listener2);
+                emitter.on('dummy', listener3);
+
+                emitter.emit('click');
+                emitter.emit('dummy');
+                emitter.off('click.foo');
+                emitter.emit('click');
+                emitter.emit('dummy');
+
+                expect(stack).to.eql(['listener1', 'listener2', 'listener3', 'listener1', 'listener3']);
+            });
+
+
+            it('should remove all the listeners of the namespace (if not event is specified)', function () {
+                emitter.on('click', listener1);
+                emitter.on('click.foo', listener2);
+                emitter.on('dummy.bar', listener3);
+
+                emitter.emit('click');
+                emitter.emit('dummy');
+                emitter.off('.foo');
+                emitter.off('.bar');
+                emitter.emit('click');
+                emitter.emit('dummy');
+
+                expect(stack).to.eql(['listener1', 'listener2', 'listener3', 'listener1']);
+            });
         });
 
         describe('.has()', function () {
-
             it('should should return true for added listeners and false for not added listeners', function () {
                 var someFunc = function () {},
                     otherFunc = function () {};
@@ -200,15 +301,19 @@ define([
                 emitter.on('click', otherFunc);
 
                 expect(emitter.has('click', someFunc)).to.be.equal(true);
+                expect(emitter.has('click', otherFunc)).to.be.equal(true);
                 expect(emitter.has('click')).to.be.equal(true);
+                expect(emitter.has('mouseover')).to.be.equal(false);
 
                 emitter.off('click', someFunc);
 
                 expect(emitter.has('click', someFunc)).to.be.equal(false);
+                expect(emitter.has('click', otherFunc)).to.be.equal(true);
                 expect(emitter.has('click')).to.be.equal(true);
 
                 emitter.off('click', otherFunc);
 
+                expect(emitter.has('click', otherFunc)).to.be.equal(false);
                 expect(emitter.has('click')).to.be.equal(false);
             });
 
@@ -221,6 +326,19 @@ define([
                 emitter.emit('click');
 
                 expect(emitter.has('click')).to.be.equal(false);
+            });
+
+            it('should work with namespaces', function () {
+                var someFunc = function () {},
+                    otherFunc = function () {};
+
+                emitter.on('click.foo', someFunc);
+                emitter.on('click.bar', otherFunc);
+
+                expect(emitter.has('.foo', someFunc)).to.be.equal(true);
+                expect(emitter.has('.foo', otherFunc)).to.be.equal(false);
+                expect(emitter.has('.bar')).to.be.equal(true);
+                expect(emitter.has('.other')).to.be.equal(false);
             });
         });
 
@@ -381,7 +499,6 @@ define([
 
                 expect(stack).to.eql(['one', 'four', 'two', 'one', 'four', 'two']);
             });
-
         });
 
         describe('.forEach()', function () {

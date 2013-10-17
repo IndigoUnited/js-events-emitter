@@ -8,12 +8,14 @@ define([
 
     'use strict';
 
-    var getListenerIndex = MixableEventsEmitter.getListenerIndex;
+    var getListenerIndex = MixableEventsEmitter.getListenerIndex,
+        parseEvent = MixableEventsEmitter.parseEvent,
+        parseEventResult = MixableEventsEmitter.parseEventResult;
 
-    function EventsEmmiter() {}
+    function EventsEmiter() {}
 
-    EventsEmmiter.prototype = Object.create(MixableEventsEmitter.prototype);
-    EventsEmmiter.prototype.constructor = EventsEmmiter;
+    EventsEmiter.prototype = Object.create(MixableEventsEmitter.prototype);
+    EventsEmiter.prototype.constructor = EventsEmiter;
 
     /**
      * Emits an event.
@@ -23,7 +25,7 @@ define([
      *
      * @return {EventsEmitter} The instance itself to allow chaining
      */
-    EventsEmmiter.prototype.emit = function () {
+    EventsEmiter.prototype.emit = function () {
         return this._emit.apply(this, arguments);
     };
 
@@ -37,27 +39,35 @@ define([
      *
      * @return {Boolean} True if it is attached, false otherwise
      */
-    EventsEmmiter.prototype.has = function (event, fn, context) {
-        var events,
+    EventsEmiter.prototype.has = function (event, fn, context) {
+        var listeners,
             x;
 
+        parseEvent(event, true);
+
+        // Get the listeners array based on the name / namespace
         this._listeners = this._listeners || {};
+        this._namespaces = this._namespaces || {};
+
+        listeners = parseEventResult.name ? this._listeners[parseEventResult.name] : this._namespaces[parseEventResult.ns];
+
+        if (!listeners) {
+            return false;
+        }
 
         if (!fn) {
-            events = this._listeners[event];
-
-            if (events) {
-                for (x = events.length - 1; x >= 0; x -= 1) {
-                    if (events[x].fn) {
-                        return true;
-                    }
+            // Cycle through the array until we find a valid listener
+            // This is needed because it might contain "junk" listeners (already removed)
+            for (x = listeners.length - 1; x >= 0; x -= 1) {
+                if (listeners[x].fn) {
+                    return true;
                 }
             }
 
             return false;
         }
 
-        return getListenerIndex.call(this, event, fn, context) !== -1;
+        return getListenerIndex(listeners, fn, context) !== -1;
     };
 
     /**
@@ -67,9 +77,9 @@ define([
      * @param {Function} fn        The function to be called for each iteration
      * @param {Object}   [context] The context to be used while calling the function, defaults to the instance
      *
-     * @return {EventsEmmiter} The instance itself to allow chaining
+     * @return {EventsEmiter} The instance itself to allow chaining
      */
-    EventsEmmiter.prototype.forEach = function (fn, context) {
+    EventsEmiter.prototype.forEach = function (fn, context) {
         var key,
             x,
             length,
@@ -92,5 +102,5 @@ define([
         }
     };
 
-    return EventsEmmiter;
+    return EventsEmiter;
 });

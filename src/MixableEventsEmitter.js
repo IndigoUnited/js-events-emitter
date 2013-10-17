@@ -8,7 +8,10 @@ define(function () {
     'use strict';
 
     var hasOwn = Object.prototype.hasOwnProperty,
-        slice = Array.prototype.slice;
+        slice = Array.prototype.slice,
+        parseEventResult = {},
+        name,
+        ns;
 
     function MixableEventsEmitter() {}
 
@@ -23,14 +26,15 @@ define(function () {
      * @return {MixableEventsEmitter} The instance itself to allow chaining
      */
     MixableEventsEmitter.prototype.on = function (event, fn, context) {
-        var events;
+        parseEvent(event);
 
-        this._listeners = this._listeners || {};
-        events = this._listeners[event] = this._listeners[event] || [];
-
-        if (getListenerIndex.call(this, event, fn, context) === -1) {
-            events.push({ fn: fn, callable: fn, context: context });
-        }
+        registerListener.call(this, {
+            name: name,
+            ns: ns,
+            fn: fn,
+            callable: fn,
+            context: context
+        });
 
         return this;
     };
@@ -46,21 +50,27 @@ define(function () {
      * @return {MixableEventsEmitter} The instance itself to allow chaining
      */
     MixableEventsEmitter.prototype.once = function (event, fn, context) {
-        var events,
-            callable,
+        var callable,
+            meta,
             that = this;
 
-        this._listeners = this._listeners || {};
-        events = this._listeners[event] = this._listeners[event] || [];
+        callable = function () {
+            fn.apply(this, arguments);
+            unregisterListener.call(that, meta);
+        };
 
-        if (getListenerIndex.call(this, event, fn, context) === -1) {
-            callable = function () {
-                fn.apply(this, arguments);
-                that.off(event, fn, context);
-            };
+        parseEvent(event);
 
-            events.push({ fn: fn, callable: callable, context: context });
-        }
+        meta = {
+            name: name,
+            ns: ns,
+            fn: fn,
+            callable:
+            callable,
+            context: context
+        };
+
+        registerListener.call(this, meta);
 
         return this;
     };
@@ -77,24 +87,57 @@ define(function () {
      * @return {MixableEventsEmitter} The instance itself to allow chaining
      */
     MixableEventsEmitter.prototype.off = function (event, fn, context) {
-        var index;
+        var listeners,
+            index,
+            curr,
+            x;
 
+        // off()
+        if (!arguments.length) {
+            cleanListeners.call(this);
+            return this;
+        }
+
+        parseEvent(event);
+
+        // Get the listeners array based on the name / namespace
         this._listeners = this._listeners || {};
+        this._namespaces = this._namespaces || {};
 
-        if (!fn && arguments.length < 2) {
-            clearListeners.call(this, event);
-        } else {
-            index = getListenerIndex.call(this, event, fn, context);
+        listeners = name ? this._listeners[name] : this._namespaces[ns];
 
+        if (!listeners) {
+            return this;
+        }
+
+        // If a specific fn was passed, remove just that
+        // .off(name, fn)
+        // .off(name, fn, ctx)
+        // .off(name.namespace, fn)
+        // .off(name.namespace, fn, ctx)
+        if (arguments.length >= 2) {
+            index = getListenerIndex(listeners, fn, context);
             if (index !== -1) {
-                if (this._firing) {
-                    this._listeners[event][index] = {};
-                } else {
-                    if (this._listeners[event].length === 1) {
-                        delete this._listeners[event];
-                    } else {
-                        this._listeners[event].splice(index, 1);
-                    }
+                unregisterListener.call(this, listeners[index]);
+            }
+
+            return this;
+        }
+
+        // Remove all listeners of the given name / namespace
+        // Unroll the loop for performance reasons
+        // .off(name)
+        // .off(name.namespace)
+        if (!ns) {
+            for (x = listeners.length - 1; x >= 0; x -= 1) {
+                unregisterListener.call(this, listeners[x]);
+            }
+        } else {
+            for (x = listeners.length - 1; x >= 0; x -= 1) {
+                curr = listeners[x];
+
+                if (curr.ns === ns) {
+                    unregisterListener.call(this, listeners[x]);
                 }
             }
         }
@@ -154,24 +197,20 @@ define(function () {
     /**
      * Gets a listener index.
      *
-     * @param {String}   name      The event name
+     * @param {String}   listeners The listeners array
      * @param {Function} fn        The function
      * @param {Object}   [context] The context passed to the on() function
      *
      * @return {Number} The index of the listener if found or -1 if not found
      */
-    function getListenerIndex(event, fn, context) {
-        /*jshint validthis:true*/
-        var events = this._listeners[event],
-            x,
+    function getListenerIndex(listeners, fn, context) {
+        var x,
             curr;
 
-        if (events) {
-            for (x = events.length - 1; x >= 0; x -= 1) {
-                curr = events[x];
-                if (curr.fn === fn && curr.context === context) {
-                    return x;
-                }
+        for (x = listeners.length - 1; x >= 0; x -= 1) {
+            curr = listeners[x];
+            if (curr.fn === fn && curr.context === context) {
+                return x;
             }
         }
 
@@ -179,36 +218,118 @@ define(function () {
     }
 
     /**
-     * Removes all listeners of the given event name.
-     * If no event is specified, removes all events of all names.
+     * Registers a listener.
      *
-     * @param {String} [event] The event name
+     * @param {Object} The listener metadata
      */
-    function clearListeners(event) {
-        var key;
-
+    function registerListener(meta) {
         /*jshint validthis:true*/
-        if (event) {
-            if (this._firing) {
-                this._listeners[event].length = 0;
-            } else {
-                delete this._listeners[event];
+        var listeners,
+            name = meta.name,
+            ns = meta.ns;
+
+        this._listeners = this._listeners || {};
+        listeners = this._listeners[name] = this._listeners[name] || [];
+
+        if (getListenerIndex(listeners, meta.fn, meta.context) === -1) {
+            listeners.push(meta);
+
+            // Add also to namespace
+            if (ns) {
+                this._namespaces = this._namespaces || {};
+                listeners = this._namespaces[ns] = this._namespaces[ns] || [];
+                listeners.push(meta);
             }
-        } else {
-            if (this._firing) {
-                for (key in this._listeners) {
-                    this._listeners[key].length = 0;
+        }
+    }
+
+    /**
+     * Unregisters a listener.
+     *
+     * @param {Object} The listener metadata
+     */
+    function unregisterListener(meta) {
+        /*jshint validthis:true*/
+        var index,
+            listeners,
+            name = meta.name,
+            ns = meta.ns;
+
+        // Remove from the listeners array
+        listeners = this._listeners[name];
+        index = getListenerIndex(listeners, meta.fn, meta.context);
+        if (index !== -1) {
+            if (!this._firing) {
+                listeners.splice(index, 1);
+                if (!listeners.length) {
+                    delete listeners[name];
                 }
             } else {
-                this._listeners = {};
+                listeners[index] = {};
             }
+        }
+
+        // Remove also from the namespace array
+        if (!meta.ns) {
+            return;
+        }
+
+        listeners = this._namespaces[ns];
+        index = getListenerIndex(listeners, meta.fn, meta.context);
+        if (index !== -1) {
+            listeners.splice(index, 1);
+            if (!listeners.length) {
+                delete listeners[ns];
+            }
+        }
+    }
+
+    /**
+     * Cleans all the listeners.
+     */
+    function cleanListeners() {
+        /*jshint validthis:true*/
+        var key;
+
+        this._namespaces = {};
+
+
+        if (!this._firing) {
+            this._listeners = {};
+        } else {
+            for (key in this._listeners) {
+                this._listeners[key].length = 0;
+            }
+        }
+    }
+
+    /**
+     * Parses an event, extracting its name and namespace.
+     * They will be available in the "name" and "ns" namespace.
+     * If you want an object returned, pass "ret" as true.
+     *
+     * @param {String}  event The event name
+     * @param {Boolean} [ret] True to return an object
+     */
+    function parseEvent(event, ret) {
+        var split = event.split('.');
+
+        name = split[0] || '';
+        ns = split[1];
+
+        if (ret) {
+            parseEventResult.name = name;
+            parseEventResult.ns = ns;
+
+            return parseEventResult;
         }
     }
 
     // Export some control functions that are used internally
     // They could be useful to be used by others
     MixableEventsEmitter.getListenerIndex = getListenerIndex;
-    MixableEventsEmitter.clearListeners = clearListeners;
+    MixableEventsEmitter.parseEvent = parseEvent;
+    MixableEventsEmitter.parseEventResult = parseEventResult;
 
     return MixableEventsEmitter;
 });

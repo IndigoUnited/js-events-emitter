@@ -8,20 +8,31 @@ Simple library that allows to listen and emit events.
 
 ### .on(event, fn, [context])
 
-Register an `event` listener `fn` (with the option to pass a `context`).
+Register an `event` listener `fn` (with the option to pass a `context`).   
 Duplicate listeners are discarded.
+
+You can specify the event namespace by separating it with a `.`.   
+For instance the event `click.foo` has a name of `click` and a namespace of `foo`.
+This allows you to easily remove a namespace of events with `off('.foo')` or `click.foo`.
 
 
 ### .once(event, fn, [context])
 
-Register an `event` listener `fn` that runs only once (with the option to pass a `context`).
+Register an `event` listener `fn` that runs only once (with the option to pass a `context`).   
 Duplicate listeners are discarded.
 
 
 ### .off([event], [fn], [context])
 
-Remove `event` listener `fn` that was added with `context`.
-If no `fn` is passed, removes all listeners for `event` or all the emitter listeners if no `event` is passed.
+Remove `event` listener `fn` that was added with `context`.   
+If no `fn` is passed, removes all listeners for `event` or all listeners if no `event` is passed.
+
+You can remove events using namespaces. Bellow is a list of all the supported `event` signatures:
+
+- `.off('click', handler)` - Removes the specific `handler` from the `click` event with no context
+- `.off('click', handler, context)` - Removes the specific `handler` from the `click` event with the specified `context`
+- `.off('click.foo')` - Removes all the `click` handlers that were added with `click.foo`
+- `.off('.foo')` - Removes all the events that were added with `xx.foo` where `xx` are arbitrary event names
 
 
 ### .has(event, [fn])
@@ -29,16 +40,20 @@ If no `fn` is passed, removes all listeners for `event` or all the emitter liste
 Checks if the listener `fn` for event `event` is registered.
 If no `fn` is passed, returns true if at least one listener is registered for `event`.
 
+Namespaces are allowed empowering you with the ability to check for the presence of listeners in a particular namespace.
 
-### .emit(event, ...)
 
-Emit an `event` with variable option args.
+### .emit(name, ...)
+
+Emit an event named `name` with variable option args.
 
 
 ### .forEach(fn, [context])
 
 Cycles through all the events and its listeners.
 Calls `fn` with `context` foreach iteration.
+
+The `context` function will be called with `name`, `fn` and `context`.
 
 
 
