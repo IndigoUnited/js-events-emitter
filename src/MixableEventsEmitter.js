@@ -75,6 +75,9 @@ define(function () {
         return this;
     };
 
+    // Alias to once()
+    MixableEventsEmitter.prototype.one = MixableEventsEmitter.prototype.once;
+
     /**
      * Removes an existent event listener.
      * If no fn and context is passed, removes all event listeners of a given name.

@@ -108,6 +108,10 @@ define([
 
                 expect(stack).to.eql(['one', 'two', 'one']);
             });
+
+            it('should be equal to on()', function () {
+                expect(emitter.once).to.be(emitter.one);
+            });
         });
 
         describe('.off(event, fn, $context)', function () {
