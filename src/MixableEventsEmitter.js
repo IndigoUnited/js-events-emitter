@@ -296,7 +296,6 @@ define(function () {
 
         this._namespaces = {};
 
-
         if (!this._firing) {
             this._listeners = {};
         } else {
