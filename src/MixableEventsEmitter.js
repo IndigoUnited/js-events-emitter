@@ -273,11 +273,11 @@ define(function () {
         }
 
         // Remove also from the namespace array
-        if (!meta.ns) {
+        listeners = this._namespaces && this._namespaces[ns];
+        if (!listeners) {
             return;
         }
 
-        listeners = this._namespaces[ns];
         index = getListenerIndex(listeners, meta.fn, meta.context);
         if (index !== -1) {
             listeners.splice(index, 1);

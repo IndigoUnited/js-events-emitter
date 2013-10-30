@@ -236,7 +236,7 @@ define([
                 expect(stack).to.eql(['listener1', 'listener2', 'listener3', 'listener3']);
             });
 
-            it('should remove all the listeners (if not event is specified)', function () {
+            it('should remove all the listeners (if no event is specified)', function () {
                 emitter.on('click', listener1);
                 emitter.on('click', listener2);
                 emitter.on('dummy', listener3);
@@ -277,7 +277,7 @@ define([
             });
 
 
-            it('should remove all the listeners of the namespace (if not event is specified)', function () {
+            it('should remove all the listeners of the namespace (if no event is specified)', function () {
                 emitter.on('click', listener1);
                 emitter.on('click.foo', listener2);
                 emitter.on('dummy.bar', listener3);
@@ -290,6 +290,16 @@ define([
                 emitter.emit('dummy');
 
                 expect(stack).to.eql(['listener1', 'listener2', 'listener3', 'listener1']);
+            });
+
+            it('should not error out when used with .once()', function () {
+                emitter.once('foo.bar', function () {
+                    emitter.off();
+                });
+
+                expect(function () {
+                    emitter.emit('foo');
+                }).to.not.throwException();
             });
         });
 
