@@ -22,11 +22,6 @@ Register an `event` listener `fn` that runs only once (with the option to pass a
 Duplicate listeners are discarded.
 
 
-### .one(event, fn, [context])
-
-Alias of `.once()` to have an API similar jQuery API.
-
-
 ### .off([event], [fn], [context])
 
 Remove `event` listener `fn` that was added with `context`.   
