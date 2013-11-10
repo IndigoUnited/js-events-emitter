@@ -25,9 +25,8 @@ define([
      *
      * @return {EventsEmitter} The instance itself to allow chaining
      */
-    EventsEmiter.prototype.emit = function () {
-        return this._emit.apply(this, arguments);
-    };
+    EventsEmiter.prototype.emit = MixableEventsEmitter.prototype._emit;
+    EventsEmiter.prototype.trigger = MixableEventsEmitter.prototype._trigger;
 
     /**
      * Check if a listener is attached to a given event name.
