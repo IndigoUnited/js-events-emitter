@@ -65,8 +65,7 @@ define(function () {
             name: name,
             ns: ns,
             fn: fn,
-            callable:
-            callable,
+            callable: callable,
             context: context
         };
 
