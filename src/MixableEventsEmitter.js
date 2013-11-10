@@ -195,6 +195,9 @@ define(function () {
         return this;
     };
 
+    // Alias to _emit()
+    MixableEventsEmitter.prototype._trigger = MixableEventsEmitter.prototype._emit;
+    
     /////////////////////////////////////////////////////////////////////////////////////
 
     /**
