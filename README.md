@@ -13,7 +13,7 @@ Duplicate listeners are discarded.
 
 You can specify the event namespace by separating it with a `.`.
 For instance the event `click.foo` has a name of `click` and a namespace of `foo`.
-This allows you to easily remove a namespace of events with `off('.foo')` or `click.foo`.
+This allows you to easily remove a namespace of events with `off('.foo')` or `off('click.foo')`.
 
 
 ### .once(event, fn, [context])
