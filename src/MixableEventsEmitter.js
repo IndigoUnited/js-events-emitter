@@ -95,7 +95,7 @@ define(function () {
             x;
 
         // off()
-        if (!arguments.length) {
+        if (!event) {
             cleanListeners.call(this);
             return this;
         }
@@ -117,7 +117,7 @@ define(function () {
         // .off(name, fn, ctx)
         // .off(name.namespace, fn)
         // .off(name.namespace, fn, ctx)
-        if (arguments.length >= 2) {
+        if (fn) {
             index = getListenerIndex(listeners, fn, context);
             if (index !== -1) {
                 unregisterListener.call(this, listeners[index]);
@@ -196,7 +196,7 @@ define(function () {
 
     // Alias to _emit()
     MixableEventsEmitter.prototype._trigger = MixableEventsEmitter.prototype._emit;
-    
+
     /////////////////////////////////////////////////////////////////////////////////////
 
     /**
