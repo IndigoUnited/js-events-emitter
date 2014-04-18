@@ -1,4 +1,4 @@
-# EventsEmitter [![Build Status](https://secure.travis-ci.org/IndigoUnited/events-emitter.png?branch=master)](http://travis-ci.org/IndigoUnited/events-emitter)
+# EventsEmitter [![Build Status](https://secure.travis-ci.org/IndigoUnited/js-events-emitter.png?branch=master)](http://travis-ci.org/IndigoUnited/js-events-emitter)
 
 Simple library that allows to listen and emit events.
 
