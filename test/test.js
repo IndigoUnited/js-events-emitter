@@ -145,6 +145,19 @@ define([
 
                 expect(stack).to.eql(['listener', 'other', 'other', 'listener']);
             });
+
+            it('should not error out if the listener is removed several times', function () {
+                var listener = function () {
+                    emitter.off('click', listener);
+                    emitter.off('click', listener);
+                };
+
+                emitter.on('click', listener);
+
+                expect(function () {
+                    emitter.emit('click');
+                }).to.not.throwException();
+            });
         });
 
         describe('.off($event.namespace, fn, $context)', function () {
@@ -209,6 +222,19 @@ define([
 
                 expect(stack).to.eql(['listener', 'other', 'other', 'listener']);
             });
+
+            it('should not error out if the listener is removed several times', function () {
+                var listener = function () {
+                    emitter.off('click.foo', listener);
+                    emitter.off('click.foo', listener);
+                };
+
+                emitter.on('click.foo', listener);
+
+                expect(function () {
+                    emitter.emit('click');
+                }).to.not.throwException();
+            });
         });
 
         describe('.off($event)', function () {
@@ -248,6 +274,19 @@ define([
                 emitter.emit('dummy');
 
                 expect(stack).to.eql(['listener1', 'listener2', 'listener3']);
+            });
+
+            it('should not error out if the listener is removed several times', function () {
+                var listener = function () {
+                    emitter.off('click.foo');
+                    emitter.off('click.foo');
+                };
+
+                emitter.on('click.foo', listener);
+
+                expect(function () {
+                    emitter.emit('click');
+                }).to.not.throwException();
             });
         });
 
@@ -299,6 +338,19 @@ define([
 
                 expect(function () {
                     emitter.emit('foo');
+                }).to.not.throwException();
+            });
+
+            it('should not error out if the listener is removed several times', function () {
+                var listener = function () {
+                    emitter.off('click');
+                    emitter.off('click');
+                };
+
+                emitter.on('click', listener);
+
+                expect(function () {
+                    emitter.emit('click');
                 }).to.not.throwException();
             });
         });

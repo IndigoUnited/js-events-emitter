@@ -132,14 +132,18 @@ define(function () {
         // .off(name.namespace)
         if (!ns) {
             for (x = listeners.length - 1; x >= 0; x -= 1) {
-                unregisterListener.call(this, listeners[x]);
+                curr = listeners[x];
+
+                if (hasOwn.call(curr, 'fn')) {
+                    unregisterListener.call(this, curr);
+                }
             }
         } else {
             for (x = listeners.length - 1; x >= 0; x -= 1) {
                 curr = listeners[x];
 
                 if (curr.ns === ns) {
-                    unregisterListener.call(this, listeners[x]);
+                    unregisterListener.call(this, curr);
                 }
             }
         }
@@ -267,7 +271,7 @@ define(function () {
             if (!this._firing) {
                 listeners.splice(index, 1);
                 if (!listeners.length) {
-                    delete listeners[name];
+                    delete this._listeners[name];
                 }
             } else {
                 listeners[index] = {};
@@ -284,7 +288,7 @@ define(function () {
         if (index !== -1) {
             listeners.splice(index, 1);
             if (!listeners.length) {
-                delete listeners[ns];
+                delete this._namespaces[ns];
             }
         }
     }
