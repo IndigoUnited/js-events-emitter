@@ -55,8 +55,8 @@ define(function () {
             that = this;
 
         callable = function () {
-            fn.apply(this, arguments);
             unregisterListener.call(that, meta);
+            fn.apply(this, arguments);
         };
 
         parseEvent(event);

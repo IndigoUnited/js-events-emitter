@@ -112,6 +112,17 @@ define([
             it('should be equal to on()', function () {
                 expect(emitter.once).to.be(emitter.one);
             });
+
+            it('should remove the listener before executing the function', function () {
+                emitter.once('click', function () {
+                    stack.push('one');
+                    emitter.emit('click');
+                });
+
+                emitter.emit('click');
+
+                expect(stack).to.eql(['one']);
+            });
         });
 
         describe('.off(event, fn, $context)', function () {
