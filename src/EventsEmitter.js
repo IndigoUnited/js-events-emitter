@@ -9,8 +9,7 @@ define([
     'use strict';
 
     var getListenerIndex = MixableEventsEmitter.getListenerIndex,
-        parseEvent = MixableEventsEmitter.parseEvent,
-        parseEventResult = MixableEventsEmitter.parseEventResult;
+        parseEvent = MixableEventsEmitter.parseEvent;
 
     function EventsEmiter() {}
 
@@ -40,15 +39,16 @@ define([
      */
     EventsEmiter.prototype.has = function (event, fn, context) {
         var listeners,
-            x;
+            x,
+            parsed;
 
-        parseEvent(event, true);
+        parsed = parseEvent(event, true);
 
         // Get the listeners array based on the name / namespace
         this._listeners = this._listeners || {};
         this._namespaces = this._namespaces || {};
 
-        listeners = parseEventResult.name ? this._listeners[parseEventResult.name] : this._namespaces[parseEventResult.ns];
+        listeners = parsed.name ? this._listeners[parsed.name] : this._namespaces[parsed.ns];
 
         if (!listeners) {
             return false;
@@ -70,8 +70,10 @@ define([
     };
 
     /**
-     * Cycles through all the events and its listeners.
-     * The function will receive the event name and the handler for each iteration.
+     * Cycles through all the event listeners.
+     * The function will receive the event name, handler and context for each iteration.
+     *
+     * You SHOULD NOT remove any listeners while doing so, it will have UNEXPECTED BEHAVIOR.
      *
      * @param {Function} fn        The function to be called for each iteration
      * @param {Object}   [context] The context to be used while calling the function, defaults to the instance
@@ -96,6 +98,41 @@ define([
                 curr = currEvent[x];
                 if (curr.fn) {
                     fn.call(context, key, curr.fn, curr.context);
+                }
+            }
+        }
+    };
+
+    /**
+     * Cycles through all the events meta.
+     * The function will receive the event meta for each iteration.
+     *
+     * The event meta contains the event name, namespace, function and other useful stuff used inside.
+     * You SHOULD NOT remove any listeners while doing so, it will have UNEXPECTED BEHAVIOR.
+     *
+     * @param {Function} fn        The function to be called for each iteration
+     * @param {Object}   [context] The context to be used while calling the function, defaults to the instance
+     *
+     * @return {EventsEmiter} The instance itself to allow chaining
+     */
+    EventsEmiter.prototype.forEachMeta = function (fn, context) {
+        var key,
+            x,
+            length,
+            currEvent,
+            curr;
+
+        this._listeners = this._listeners || {};
+        context = context || this;
+
+        for (key in this._listeners) {
+            currEvent = this._listeners[key];
+
+            length = currEvent.length;
+            for (x = 0; x < length; x += 1) {
+                curr = currEvent[x];
+                if (curr.fn) {
+                    fn.call(context, curr);
                 }
             }
         }

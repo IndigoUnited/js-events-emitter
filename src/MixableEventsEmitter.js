@@ -9,9 +9,7 @@ define(function () {
 
     var hasOwn = Object.prototype.hasOwnProperty,
         slice = Array.prototype.slice,
-        parseEventResult = {},
-        name,
-        ns;
+        parseEventResult = {};
 
     function MixableEventsEmitter() {}
 
@@ -26,11 +24,11 @@ define(function () {
      * @return {MixableEventsEmitter} The instance itself to allow chaining
      */
     MixableEventsEmitter.prototype.on = function (event, fn, context) {
-        parseEvent(event);
+        var parsed = parseEvent(event, true);
 
         registerListener.call(this, {
-            name: name,
-            ns: ns,
+            name: parsed.name,
+            ns: parsed.ns,
             fn: fn,
             callable: fn,
             context: context
@@ -52,18 +50,19 @@ define(function () {
     MixableEventsEmitter.prototype.once = function (event, fn, context) {
         var callable,
             meta,
-            that = this;
+            that = this,
+            parsed;
 
         callable = function () {
             unregisterListener.call(that, meta);
             fn.apply(this, arguments);
         };
 
-        parseEvent(event);
+        parsed = parseEvent(event, true);
 
         meta = {
-            name: name,
-            ns: ns,
+            name: parsed.name,
+            ns: parsed.ns,
             fn: fn,
             callable: callable,
             context: context
@@ -92,7 +91,8 @@ define(function () {
         var listeners,
             index,
             curr,
-            x;
+            x,
+            parsed;
 
         // off()
         if (!event) {
@@ -100,13 +100,13 @@ define(function () {
             return this;
         }
 
-        parseEvent(event);
+        parsed = parseEvent(event, true);
 
         // Get the listeners array based on the name / namespace
         this._listeners = this._listeners || {};
         this._namespaces = this._namespaces || {};
 
-        listeners = name ? this._listeners[name] : this._namespaces[ns];
+        listeners = parsed.name ? this._listeners[parsed.name] : this._namespaces[parsed.ns];
 
         if (!listeners) {
             return this;
@@ -119,6 +119,7 @@ define(function () {
         // .off(name.namespace, fn, ctx)
         if (fn) {
             index = getListenerIndex(listeners, fn, context);
+
             if (index !== -1) {
                 unregisterListener.call(this, listeners[index]);
             }
@@ -130,7 +131,7 @@ define(function () {
         // Unroll the loop for performance reasons
         // .off(name)
         // .off(name.namespace)
-        if (!ns) {
+        if (!parsed.ns) {
             for (x = listeners.length - 1; x >= 0; x -= 1) {
                 curr = listeners[x];
 
@@ -142,7 +143,7 @@ define(function () {
             for (x = listeners.length - 1; x >= 0; x -= 1) {
                 curr = listeners[x];
 
-                if (curr.ns === ns) {
+                if (curr.ns === parsed.ns) {
                     unregisterListener.call(this, curr);
                 }
             }
@@ -316,28 +317,30 @@ define(function () {
      * They will be available in the "name" and "ns" namespace.
      * If you want an object returned, pass "ret" as true.
      *
-     * @param {String}  event The event name
-     * @param {Boolean} [ret] True to return an object
+     * @param {String} event  The event name
+     * @param {Boolean} [reuse] Re-use the same object to avoid creating too much objects, defaults to true
+     *
+     * @return {Object} The parsed event
      */
-    function parseEvent(event, ret) {
-        var split = event.split('.');
+    function parseEvent(event, reuse) {
+        var split,
+            ret = reuse ? parseEventResult : {};
 
-        name = split[0] || '';
-        ns = split[1];
-
-        if (ret) {
-            parseEventResult.name = name;
-            parseEventResult.ns = ns;
-
-            return parseEventResult;
+        if (event == null) {
+            return null;
         }
+
+        split = event.split('.');
+        ret.name = split[0];
+        ret.ns = split[1];
+
+        return ret;
     }
 
     // Export some control functions that are used internally
     // They could be useful to be used by others
     MixableEventsEmitter.getListenerIndex = getListenerIndex;
     MixableEventsEmitter.parseEvent = parseEvent;
-    MixableEventsEmitter.parseEventResult = parseEventResult;
 
     return MixableEventsEmitter;
 });

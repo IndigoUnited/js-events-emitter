@@ -50,11 +50,21 @@ Emit an event named `name` with variable option args.
 
 ### .forEach(fn, [context])
 
-Cycles through all the events and its listeners.
+Cycles through all the event listeners.
 Calls `fn` with `context` foreach iteration.
 
 The `context` function will be called with `name`, `fn` and `context`.
+You SHOULD NOT remove any listeners while doing so, it will have UNEXPECTED BEHAVIOR.
 
+
+### .forEachMeta(fn, [context])
+
+Cycles through all the event listeners meta.
+Calls `fn` with `context` foreach iteration.
+This is similar to .forEach but gives much more information about each listener.
+
+The `context` function will be called with `meta` which is an object containing the `name`, `fn`, `context` and other useful information.
+You SHOULD NOT remove any listeners while doing so, it will have UNEXPECTED BEHAVIOR.
 
 
 ## How to use
